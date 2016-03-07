@@ -54,9 +54,15 @@ LDFLAGS += -fopenmp
 else ifeq "$(COMPILER)" "clang"
 # clang, clang++
 CFLAGS = $(OPTFLAGS)
-CXXFLAGS = -std=c++11 $(OPTFLAGS) -fopenmp -Wno-logical-op-parentheses
+CXXFLAGS = -std=c++11 $(OPTFLAGS) -fopenmp -Wno-logical-op-parentheses -Wno-bitwise-op-parentheses
 CXXFLAGS += -MMD -MP  # auto-generate dependencies
 LDFLAGS += -fopenmp
+else ifeq "$(COMPILER)" "clang/libc++"
+# clang, clang++ with libc++
+CFLAGS = $(OPTFLAGS)
+CXXFLAGS = -std=c++11 -stdlib=libc++ $(OPTFLAGS) -fopenmp -Wno-logical-op-parentheses -Wno-bitwise-op-parentheses
+CXXFLAGS += -MMD -MP  # auto-generate dependencies
+LDFLAGS += -stdlib=libc++ -fopenmp
 # pgc, pgc++
 else ifeq "$(COMPILER)" "pgi"
 CXXFLAGS = -std=c++11 $(OPTFLAGS) -mp
