@@ -16,8 +16,8 @@ COMPILER := gnu
 # main targets
 
 demos := demo_parse demo_ssa_direct demo_sim demo_timer_test
-tests := test_small_map test_modelspec test_modelspec_yaml test_ssaapi test_check_valid
-benches := 
+tests := test_small_map test_modelspec test_modelspec_yaml test_ssaapi test_check_valid test_float_bits
+benches := bench_uniform01
 hakyll_site := ./site
 
 # output directories
@@ -122,6 +122,17 @@ test_%: obj/test_%.o librdmini.a $(yaml_lib) libgtestmain.a
 	$(CXX) -o $@ $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS)
 
 obj/test_%.o: test/test_%.cc
+	$(CXX) -c -o $@ $(CPPFLAGS) $(GTEST_CPPFLAGS) $(CXXFLAGS) $<
+
+# benches link against librdmini
+
+bench_sources := $(wildcard $(top)/test/bench_*.cc)
+bench_executables := $(patsubst %.cc,%,$(notdir $(test_sources)))
+
+bench_%: obj/bench_%.o librdmini.a $(yaml_lib)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS)
+
+obj/bench_%.o: test/bench_%.cc
 	$(CXX) -c -o $@ $(CPPFLAGS) $(GTEST_CPPFLAGS) $(CXXFLAGS) $<
 
 
